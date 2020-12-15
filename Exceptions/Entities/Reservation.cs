@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Exceptions.Entities.Exceptions;
 
 namespace Exceptions.Entities
 {
@@ -17,31 +18,35 @@ namespace Exceptions.Entities
             RoomNumber = roomNumber;
             CheckIn = checkIn;
             CheckOut = checkOut;
+
+            if (checkOut <= checkIn)
+            {
+                throw new DomainException("Error in reservation: Check-Out data must be after Check-in date.");
+            }
         }
 
-        public int Duration ()
+        public int Duration()
         {
             TimeSpan duration = CheckOut.Subtract(CheckIn);
-            return (int) duration.TotalDays;
+            return (int)duration.TotalDays;
         }
-        public string UpdateDates (DateTime checkIn, DateTime checkOut)
+        public void UpdateDates(DateTime checkIn, DateTime checkOut)
         {
             DateTime now = DateTime.Now;
 
             if (checkIn < now || checkOut < now)
             {
-               return ("Error in reservation: Reservation dates for update must be future dates");
+                throw new DomainException("Error in reservation: Reservation dates for update must be future dates");
             }
 
             if (checkOut <= checkIn)
             {
-               return ("Error in reservation: Check-Out data must be after Check-in date.");
+                throw new DomainException("Error in reservation: Check-Out data must be after Check-in date.");
             }
 
 
             CheckIn = checkIn;
             CheckOut = checkOut;
-            return null;
         }
 
         public override string ToString()
